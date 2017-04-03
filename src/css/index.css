@@ -28,8 +28,35 @@ textarea {
 /* 提示消息效果 */
 .alert {
     position: fixed;
-    top:20px;
+    top:-50px;
     left:25%;
     width:50%;
-    display:none;
+    animation: alertheight 3s;
+    -moz-animation: alertheight 3s; /* Firefox */
+    -webkit-animation: alertheight 3s; /* Safari and Chrome */
+    -o-animation: alertheight 3s; /* Opera */
+}
+@keyframes alertheight
+{
+0%   {top: -50px;}
+50%  {top: 20px;}
+100% {top: -50px;}
+}
+@-moz-keyframes alertheight /* Firefox */
+{
+0%   {top: -50px;}
+50%  {top: 20px;}
+100% {top: -50px;}
+}
+@-webkit-keyframes alertheight /* Safari and Chrome */
+{
+0%   {top: -50px;}
+50%  {top: 20px;}
+100% {top: -50px;}
+}
+@-o-keyframes alertheight /* Opera */
+{
+0%   {top: -50px;}
+50%  {top: 20px;}
+100% {top: -50px;}
 }

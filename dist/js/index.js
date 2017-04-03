@@ -20790,16 +20790,15 @@ var MessageForm = React.createClass({
     onSubmit: function (e) {
         // 点击提交按钮，获取输入框内容，调用提交函数发送请求
         e.preventDefault();
-        var name = encodeURIComponent(this.refs.name.value.trim());
-        var content = encodeURIComponent(this.refs.content.value.trim());
-        if ($.isEmptyObject(name) || $.isEmptyObject(content)) {
-            $('#alertWarning').fadeIn().fadeOut(3000); // 提示内容不能为空
-        } else {
-            this.props.submit(name, content); // 内容不为空，提交
-        }
+        var that = this,
+            // 缓存this指针指向
+        name = encodeURIComponent(that.refs.name.value.trim()),
+            // 获取名称输入框数据
+        content = encodeURIComponent(that.refs.content.value.trim());
+        that.props.submit(name, content); // 调用submit处理
         // 提交完成，清空输入框
-        this.refs.name.value = '';
-        this.refs.content.value = '';
+        that.refs.name.value = '';
+        that.refs.content.value = '';
     },
     onReset: function (e) {
         // 输入框返回初始状态，及内容为空（重置按钮调用）
@@ -20816,7 +20815,7 @@ var MessageForm = React.createClass({
                 React.createElement(
                     'div',
                     { className: 'col-xs-4' },
-                    React.createElement('input', { className: 'form-control', type: 'text', 'check-type': 'required', name: 'name', ref: 'name', placeholder: '\u8BF7\u8F93\u5165\u6807\u9898', required: true })
+                    React.createElement('input', { className: 'form-control', type: 'text', name: 'name', ref: 'name', placeholder: '\u8BF7\u8F93\u5165\u6807\u9898', required: true })
                 )
             ),
             React.createElement(
@@ -20885,40 +20884,43 @@ var MessageAlert = React.createClass({
     displayName: 'MessageAlert',
 
     render: function () {
-        return React.createElement(
-            'div',
-            null,
-            React.createElement(
-                'div',
-                { className: 'alert alert-info', id: 'alertInfo' },
-                React.createElement(
-                    'strong',
-                    null,
-                    '\u63D0\u793A\uFF01'
-                ),
-                '\u7531\u4E8E\u540E\u53F0\u6570\u636E\u662F\u5047\u6570\u636E\uFF0C\u5047\u6570\u636E\u8BBE\u7F6E\u4E86\u5F53\u6570\u636E\u6761\u76EE\u8D85\u8FC750\u6761\u65F6\uFF0C\u6570\u636E\u5185\u5BB9\u81EA\u52A8\u521D\u59CB\u5316\u4E3A\u6700\u521D\u7684\u4E09\u6761\u3002'
-            ),
-            React.createElement(
-                'div',
-                { className: 'alert alert-success', id: 'alertSuccess' },
-                React.createElement(
-                    'strong',
-                    null,
-                    '\u901A\u77E5\uFF01'
-                ),
-                '\u63D0\u4EA4\u6210\u529F\u3002'
-            ),
-            React.createElement(
-                'div',
-                { className: 'alert alert-warning', id: 'alertWarning' },
-                React.createElement(
-                    'strong',
-                    null,
-                    '\u8B66\u544A\uFF01'
-                ),
-                '\u6807\u9898\u548C\u5185\u5BB9\u4E0D\u80FD\u4E3A\u7A7A\u3002'
-            )
-        );
+        switch (this.props.alert) {
+            case 'info':
+                return React.createElement(
+                    'div',
+                    { className: 'alert alert-info' },
+                    React.createElement(
+                        'strong',
+                        null,
+                        '\u63D0\u793A\uFF01'
+                    ),
+                    '\u7531\u4E8E\u540E\u53F0\u6570\u636E\u662F\u5047\u6570\u636E\uFF0C\u5047\u6570\u636E\u8BBE\u7F6E\u4E86\u5F53\u6570\u636E\u6761\u76EE\u8D85\u8FC750\u6761\u65F6\uFF0C\u6570\u636E\u5185\u5BB9\u81EA\u52A8\u521D\u59CB\u5316\u4E3A\u6700\u521D\u7684\u4E09\u6761\u3002'
+                );
+            case 'success':
+                return React.createElement(
+                    'div',
+                    { className: 'alert alert-success' },
+                    React.createElement(
+                        'strong',
+                        null,
+                        '\u901A\u77E5\uFF01'
+                    ),
+                    '\u63D0\u4EA4\u6210\u529F\u3002'
+                );
+            case 'warning':
+                return React.createElement(
+                    'div',
+                    { className: 'alert alert-warning' },
+                    React.createElement(
+                        'strong',
+                        null,
+                        '\u8B66\u544A\uFF01'
+                    ),
+                    '\u6807\u9898\u548C\u5185\u5BB9\u4E0D\u80FD\u4E3A\u7A7A\u3002'
+                );
+            default:
+                return null;
+        }
     }
 });
 
@@ -20929,33 +20931,51 @@ var MessagePanel = React.createClass({
     getInitialState: function () {
         // 初始化data为空
         return {
-            data: []
+            data: [],
+            alert: ''
         };
     },
     submit: function (name, content) {
         // 提交数据，将表单中的数据ajax提交
-        $.ajax({
-            type: 'post',
-            url: '/post',
-            contentType: 'application/json; charset=utf-8',
-            data: { name: name, content: content },
-            dataType: 'json'
-        }).done(function (resp) {
-            if ('success' === resp.status) {
-                // 提交成功
-                this.listContent(); // 更新留言板列表
-                this.scrollBottom(); // 页面滚动到底部
-                $('#alertSuccess').fadeIn().fadeOut(3000);
-            } else {
-                $('#alertInfo').fadeIn().fadeOut(3000); // 提交失败，显示原因
-            }
-        }.bind(this));
+        var that = this; // 缓存this指针指向
+        that.setState({
+            alert: ''
+        });
+        if ($.isEmptyObject(name) || $.isEmptyObject(content)) {
+            window.setTimeout(function () {
+                // 设计延迟，否则此处的setState会和前面的融合处理，导致多次空点击时无法弹出
+                that.setState({ // 提示内容不能为空
+                    alert: 'warning'
+                });
+            }, 100);
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/post',
+                contentType: 'application/json; charset=utf-8',
+                data: { name: name, content: content },
+                dataType: 'json'
+            }).done(function (resp) {
+                if ('success' === resp.status) {
+                    // 提交成功
+                    that.listContent(); // 更新留言板列表
+                    that.scrollBottom(); // 页面滚动到底部
+                    that.setState({ // 提示内容不能为空
+                        alert: 'success'
+                    });
+                } else {
+                    that.setState({ // 提示内容不能为空
+                        alert: 'info'
+                    });
+                }
+            }.bind(that));
+        }
     },
     scrollBottom: function gotoBottom() {
         // 添加留言成功后页面滚动到最下方进行查看
         var speeding = 1.1,
-            stime = 10;
-        var top = document.documentElement.scrollTop || document.body.scrollTop || 1; // 多浏览器兼容获取页面Y轴滚动偏移位置,若位置为0，赋值为1
+            stime = 10,
+            top = document.documentElement.scrollTop || document.body.scrollTop || 1; // 多浏览器兼容获取页面Y轴滚动偏移位置,若位置为0，赋值为1
         window.scrollTo(0, Math.ceil(top * speeding)); // 页面向下滚动滚动
         var topnew = document.documentElement.scrollTop || document.body.scrollTop; // 获取向下滚动后的Y轴偏移位置
         if (topnew > top) {
@@ -20965,6 +20985,7 @@ var MessagePanel = React.createClass({
     },
     listContent: function () {
         // 获取留言列表
+        var that = this;
         $.ajax({
             type: 'get',
             url: '/get',
@@ -20972,11 +20993,11 @@ var MessagePanel = React.createClass({
         }).done(function (resp) {
             if ('success' === resp.status) {
                 // 获取留言成功，将留言赋值到模块的state值中
-                this.setState({
+                that.setState({
                     data: resp.data
                 });
             }
-        }.bind(this));
+        }.bind(that));
     },
     componentDidMount: function () {
         // 初始化加载界面获取列表
@@ -21003,7 +21024,7 @@ var MessagePanel = React.createClass({
                 { className: 'col-xs-8' },
                 React.createElement(MessageForm, { submit: this.submit }),
                 React.createElement(MessageList, { data: this.state.data }),
-                React.createElement(MessageAlert, null)
+                React.createElement(MessageAlert, { alert: this.state.alert })
             ),
             React.createElement(
                 'div',
