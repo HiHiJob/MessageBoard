@@ -20997,18 +20997,18 @@ var MessagePanel = React.createClass({
         return React.createElement(
             'div',
             null,
-            React.createElement('div', { 'class': 'col-xs-2' }),
+            React.createElement('div', { className: 'col-xs-2' }),
             React.createElement(
                 'div',
-                { 'class': 'col-xs-8' },
+                { className: 'col-xs-8' },
                 React.createElement(MessageForm, { submit: this.submit }),
                 React.createElement(MessageList, { data: this.state.data }),
                 React.createElement(MessageAlert, null)
             ),
             React.createElement(
                 'div',
-                { 'class': 'col-xs-2' },
-                React.createElement('span', { 'class': 'icon-top', onClick: this.gotoTop })
+                { className: 'col-xs-2' },
+                React.createElement('span', { className: 'icon-top', onClick: this.gotoTop })
             )
         );
     }

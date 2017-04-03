@@ -143,15 +143,15 @@ var MessagePanel = React.createClass({
     render: function(){
         return (
             <div>
-                <div class="col-xs-2">
+                <div className="col-xs-2">
                 </div>
-                <div class="col-xs-8">
+                <div className="col-xs-8">
                     <MessageForm submit={this.submit} />
                     <MessageList data={this.state.data} />
                     <MessageAlert />
                 </div>
-                <div class="col-xs-2">
-                    <span class="icon-top" onClick={this.gotoTop}></span>
+                <div className="col-xs-2">
+                    <span className="icon-top" onClick={this.gotoTop}></span>
                 </div>
             </div>
         )
