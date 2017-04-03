@@ -8,8 +8,8 @@ Mock.js假数据填充，无需任何后台，即开即用；
 
 具体实现：
 React.js实现总体界面（src/js/index.js）；
-jQuery实现消息提示隐藏（src/js/index.js）；
-Bootstrap实现效果；
+Bootstrap实现总体样式；
+CSS3实现消息提示隐藏（src/css/index.css）；
 Mock.js拦截请求填充假数据。
 
 
